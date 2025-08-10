@@ -58,11 +58,5 @@ if (cluster.isPrimary) {
     app.use('/admin', adminRoutes)
     app.use('/', siteRoutes)
 
-    app.use('/admin', (req, res) => {
-        return res.status(404).render('partials/404')
-    })
-    app.use('/', (req, res) => {
-        return res.status(404).render('Site_partials/404')
-    })
     app.listen(port, console.log(`http://localhost:${port}/admin/login`))
 }

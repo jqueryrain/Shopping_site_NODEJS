@@ -8,9 +8,6 @@ const blogControllers = require('../controllers/blog.controller')
 const productControllers = require('../controllers/product.controllers.js');
 const usersControllers = require('../controllers/users.controllers.js');
 
-router.get('/dashboard', checkLogin, (req, res) => {
-    res.render('admin/adminPanel')
-})
 
 router
     .get('/login', login, (req, res) => {
@@ -20,6 +17,10 @@ router
 
 router.get('/logout', Admin.handleAdminLogout)
 
+
+router.get('/dashboard', checkLogin, (req, res) => {
+    res.render('admin/adminPanel')
+})
 
 // To Get Blog Category AND Perform Update Delete Operation
 router.route('/blog/category/:id?')
@@ -112,4 +113,8 @@ router.route('/order/:id')
 router.get('/contact/messages', checkLogin, usersControllers.getAllMessages)
 router.get('/message/:id', checkLogin, usersControllers.getSingleContactMessage)
 router.post('/send/response', checkLogin, usersControllers.sendEmailResponse)
+
+router.get('/admin', (req, res) => {
+    return res.status(404).render('partials/404')
+})
 module.exports = router;

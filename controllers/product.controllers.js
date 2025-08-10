@@ -197,6 +197,7 @@ module.exports = {
             ])
             const getorder = await order.find({}, { items: 1 })
             if (data.length == 0 || !data) return res.render('admin/product/index', { message: 'NOT FOUND' })
+
             return res.render('admin/product/index', { products: data, getorder })
         } catch (error) {
             console.log('getProductsOnAdmin :' + error.message);
@@ -609,7 +610,12 @@ module.exports = {
                         as: 'brand',
                     }
                 },
-                { $unwind: '$brand' },
+                {
+                    $unwind: {
+                        path: '$brand',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
                 {
                     $project: {
                         product_title: 1, product_price: 1, product_discount: 1, product_image: 1,
@@ -618,6 +624,7 @@ module.exports = {
                     }
                 }
             ])
+
             return res.render('site/productDetails', { singleProduct, relatedProducts })
         } catch (error) {
             if (error.message) return res.status(404).render('Site_partials/404')

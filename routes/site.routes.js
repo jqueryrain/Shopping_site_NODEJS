@@ -32,7 +32,7 @@ router.get('/shop/:page?', productControllers.showAllproducts)
 router.get('/category/:parent_category/:sub_category/:page?', checkUserlogin, productControllers.getSub_categoryProduct)
 router.get('/api/singleproduct/:id', productControllers.singleproductonCart)
 router.get('/blogs/:limit?', blogControllers.getBlogs)
-router.get('/singleblog/:slug', checkUserlogin, blogControllers.getSingleBlog)
+router.get('/singleblog/:slug', blogControllers.getSingleBlog)
 router.get('/blog/category/:blog_category/:limit?', checkUserlogin, blogControllers.getCategoryBlogs)
 router.get('/blog/tag/:tag_name?/:limit?', checkUserlogin, blogControllers.getblogsByTagName)
 
@@ -42,7 +42,7 @@ router.route('/api/comment/:id')
     .put(blogControllers.updateBlogComments)
 
 router.put('/product/Id/:id', checkUserlogin, productControllers.updateProductRating)
-router.get('/product/:slug', checkUserlogin, productControllers.getSingleProductDetails)
+router.get('/product/:slug', productControllers.getSingleProductDetails)
 
 router.put('/addtocart', checkUserlogin, productControllers.productcart)
 router.put('/updatecart/:id', checkUserlogin, productControllers.updatecart)
@@ -57,7 +57,11 @@ router.get('/myorders/:page?', checkUserlogin, productControllers.getuserOrders)
 router.get('/api/cart/length', checkUserlogin, productControllers.getCartLength)
 
 router.post('/filter', productControllers.getfilterProducts)
-router.post('/filter/price', checkUserlogin, productControllers.getpriceRangeProducts)
+router.post('/filter/price', productControllers.getpriceRangeProducts)
 
 router.post('/contact/details', userControllers.contactMessage)
+
+router.use('/*', (req, res) => {
+    return res.status(404).render('Site_partials/404')
+})
 module.exports = router

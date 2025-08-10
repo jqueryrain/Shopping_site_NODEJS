@@ -47,8 +47,10 @@
                     <div class="col-lg-6">
                         <div class="product__details__text">
                             <h3>
-                                <%= singleProduct[0].product_title %> <span>Brand: <%= singleProduct[0].brand.brand_name
-                                            %></span>
+                                <%= singleProduct[0].product_title %>
+                                    <span>
+                                        Brand: <%= singleProduct[0].brand?.brand_name %>
+                                    </span>
                             </h3>
                             <div class="rating">
                                 <i class="fa fa-star"></i>
@@ -120,9 +122,9 @@
                                     </li>
                                     <li>
                                         <span>Promotions:</span>
-                                        <% if (singleProduct[0].shipping == true) { %>
+                                        <% if (singleProduct[0].shipping==true) { %>
                                             <p>Free Shipping</p>
-                                        <% } %>
+                                            <% } %>
                                     </li>
                                 </ul>
                             </div>
