@@ -1,0 +1,3 @@
+_id,username,grandTotal,__v,product_cart[0].product_details.pid,product_cart[1].product_details.pid,product_cart[0].product_details.price,product_cart[1].product_details.price,product_cart[0].product_details.quantity,product_cart[1].product_details.quantity,product_cart[0].product_details.total,product_cart[1].product_details.total
+66f2a2ce70ed85aa89d4a551,apex,109,0,6707daca3f5835bd7500f21c,,109,,1,,109,
+66f2bd502cacd998501db634,aman,788,0,6707da3ae90d3fac616f059b,6728ae91adae25abf33351c2,624,164,1,1,624,164

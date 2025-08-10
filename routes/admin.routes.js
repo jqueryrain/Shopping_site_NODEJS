@@ -84,6 +84,8 @@ router.route('/api/parent_category')
     .get(productControllers.parenCategory)
 router.get('/productcategory/:id?', checkLogin, productControllers.showAllCategories)
 
+router.get('/product/category/:id', checkLogin, productControllers.showParentCategory)
+// router.put('/product/category/:id', checkLogin, categoryImageupload.single('image'), productControllers.updateCategory)
 router.delete('/product/category/delete/:id', checkLogin, productControllers.deleteParentCategory)
 
 router.post('/api/attributes/color', checkLogin, productControllers.createColor)

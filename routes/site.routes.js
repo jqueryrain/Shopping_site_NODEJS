@@ -1,6 +1,5 @@
-const express = require('express');
+const express = require('express')
 const router = express.Router()
-const app = express()
 const { checkUserlogin, login } = require('../Middleware/checkUserlogin')
 const user = require('../controllers/users.controllers')
 const blogControllers = require('../controllers/blog.controller')

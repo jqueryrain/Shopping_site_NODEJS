@@ -1,0 +1,5 @@
+_id,user_image,user_name,comment,date,likes,status,post_id,__v
+67041f9bd0fc40b426fff105,user.webp,apex,hello,2024-10-07T17:51:23.304Z,0,true,6703b11638cf7392f782ec2b,0
+670504fd3d607b66a843516e,user.webp,apex,great blog,2024-10-08T10:10:05.178Z,0,false,6703b13d38cf7392f782ec2d,0
+67052a097bae6efe3d348b67,user.webp,apex,helo,2024-10-08T12:48:09.083Z,0,false,6703b11638cf7392f782ec2b,0
+670637307d920f73962f94eb,user.webp,apex,helo,2024-10-09T07:56:32.111Z,1,true,6703b13d38cf7392f782ec2d,0

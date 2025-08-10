@@ -1,10 +1,15 @@
 const mongoose = require('mongoose');
+require('dotenv').config()
 
-mongoose.connect('mongodb://localhost:27017/E-Commerce')
-    .then(() => {
-        console.log('MongoDB Connected!')
-    }).catch(() => {
-        console.log('Not Connected!');
-    });
+const connectDB = async () => {
+    try {
+        mongoose.connect(process.env.MONGO_URL)
+        console.log('Database Connected')
+    } catch (error) {
+        console.log('connectDB : ' + error.message)
+    }
+}
+
+connectDB()
 
 module.exports = mongoose;

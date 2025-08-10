@@ -5,30 +5,46 @@ const path = require('path')
 const cluster = require('cluster')
 const os = require('os')
 const totalCPUs = os.cpus().length;
-
+const port = process.env.PORT;
+const miniyHTML = require('express-minify-html-terser')
+const compression = require('compression')
 
 if (cluster.isPrimary) {
-    for (let i = 0; i < totalCPUs; i++) {
-        cluster.fork()
-    }
-    cluster.fork().on('online', () => {
-        console.log(`worker online`)
-    })
+    for (let i = 0; i < totalCPUs; i++) cluster.fork()
+    cluster.fork().on('online', () => console.log(`worker online`))
 } else {
     const app = express()
-    const port = process.env.PORT;
     const adminRoutes = require('./routes/admin.routes')
     const siteRoutes = require('./routes/site.routes')
     // Use Cookie parser to send cookie
     app.use(cookie())
+    app.use(compression(
+        {
+            level: 4, // compression level
+            threshold: 0, // Compress all
+            memLevel: 9, // memory usuage
+            filter: (req, res) => compression.filter(req, res)
+        }
+    ))
 
     // TO Pass json Data
     app.use(express.json())
     app.use(express.urlencoded({ extended: false }))
 
+    app.use(miniyHTML({
+        override: true,
+        htmlMinifier: {
+            removeComments: true,
+            collapseWhitespace: true,
+            collapseBooleanAttributes: true,
+            removeAttributeQuotes: true,
+            removeEmptyAttributes: true,
+            minifyJS: true
+        }
+    }))
 
     // Serve static files from the "public" directory
-    app.use(express.static(path.join(__dirname, 'public')));
+    app.use(express.static(path.join(__dirname, 'public')))
 
     // Serve uploads img to frontend
     app.use('/uploads', express.static('uploads'))
@@ -43,10 +59,10 @@ if (cluster.isPrimary) {
     app.use('/', siteRoutes)
 
     app.use('/admin', (req, res) => {
-        res.status(404).render('partials/404')
+        return res.status(404).render('partials/404')
     })
     app.use('/', (req, res) => {
-        res.status(404).render('Site_partials/404')
+        return res.status(404).render('Site_partials/404')
     })
-    app.listen(port, console.log('Running...'))
+    app.listen(port, console.log(`http://localhost:${port}/admin/login`))
 }

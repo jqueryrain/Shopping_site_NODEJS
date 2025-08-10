@@ -44,6 +44,28 @@ module.exports = {
             console.log('parenCategory : ' + error.message);
         }
     },
+    showParentCategory: async (req, res) => {
+        try {
+            const data = await parent_Category.aggregate([
+                {
+                    $match: {
+                        _id: new mongoose.Types.ObjectId(req.params.id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'sub_categories',
+                        localField: '_id',
+                        foreignField: 'parent_id',
+                        as: 'sub_categories'
+                    }
+                }
+            ])
+            return res.json(data[0])
+        } catch (error) {
+            console.log('showParentCategory : ' + error.message)
+        }
+    },
     createScategory: async (req, res) => {
         try {
             const existingCategory = await sub_Category.findOne({
@@ -889,7 +911,10 @@ module.exports = {
             if (obj.minamount || obj.maxamount) {
                 const priceFilter = await product.aggregate([{
                     $match: {
-                        product_price: { $gte: parseInt(obj.minamount), $lte: parseInt(obj.maxamount) }
+                        product_price: {
+                            $gte: parseInt(obj.minamount),
+                            $lte: parseInt(obj.maxamount)
+                        }
                     }
                 }])
                 return res.status(200).json({ products: priceFilter })
@@ -913,9 +938,9 @@ module.exports = {
                     const sizeColorFilter = colorFilter.filter(item => {
                         return item.availableSize.some(sizeId => obj.sizeArray.includes(sizeId.toString()))
                     })
-                    res.status(200).json({ products: sizeColorFilter })
+                    return res.status(200).json({ products: sizeColorFilter })
                 }
-                res.status(200).json({ products: colorFilter })
+                return res.status(200).json({ products: colorFilter })
             }
 
             if (obj.sizeArray?.length > 0) {
@@ -929,9 +954,9 @@ module.exports = {
                     const colorSizeFilter = sizeFilter.filter(item => {
                         return item.availableColor.some(colorId => obj.colorArray.includes(colorId.toString()))
                     })
-                    res.status(200).json({ products: colorSizeFilter })
+                    return res.status(200).json({ products: colorSizeFilter })
                 }
-                res.status(200).json({ products: sizeFilter })
+                return res.status(200).json({ products: sizeFilter })
             }
         } catch (error) {
             console.log('getfilterProducts : ' + error.message);

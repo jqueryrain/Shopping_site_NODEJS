@@ -92,8 +92,8 @@
                                       <% }) %>
                                   </td>
                                   <td>
-                                    <button type="button" class="btn btn-primary"
-                                      onclick="(()=>{ window.location.href = 'category/update/<%= category._id %>'})()">Edit</button>
+                                    <button type="button" class="btn btn-success editpcategory" data-toggle="modal"
+                                      data-target="#update-category-default" data-id="<%= category._id %>">Edit</button>
                                     <% if (category.sub_categories.length==0) { %>
                                       <button type="button" class="btn btn-danger deletePcategory"
                                         data-id="<%= category._id %>" data-toggle="modal" data-target="#modal-danger">
@@ -339,9 +339,9 @@
                                     <button type="button" class="btn btn-success editBrand" data-toggle="modal"
                                       data-target="#modal-5" data-id="<%= brand._id %>"
                                       data-brand="<%= brand.brand_name %>">Edit</button>
-                                    <% const idNotFound=products.every(brandId=> !brandId.brand_name.equals(brand._id))
+                                    <% const idNotFound=products.every(brandId=> brandId.brand_name !== brand._id)
                                       %>
-                                      <% if (idNotFound) { %>
+                                      <% if (true) { %>
                                         <button type="button" class="btn btn-danger deleteBrand"
                                           data-id="<%= brand._id %>">
                                           Delete
@@ -446,6 +446,54 @@
         <!-- /.modal-dialog -->
       </div>
     </div>
+    <!-- /.modal -->
+    <div class="modal fade" id="update-category-default">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Edit Category</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="submitCategory" enctype="multipart/form-data">
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label for="category">Category Name</label>
+                    <input type="text" id="updatecategory" name="category_name" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="category">Category Description</label>
+                    <input type="text" id="updatecategory_desc" name="category_desc" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="categoryImage">Category Image :</label>
+                    <input type="file" id="categoryImage" name="image">
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-group">
+                    <label for="updatecategory">Select Parent Category (if you want!)</label>
+                    <select name="parent_id" id="updatecategoryselect" class="form-control">
+                      <option selected disabled value="">Category</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="toast-btn btn btn-primary toastrDefaultError">Save changes</button>
+            </div>
+          </form>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+    </div>
+    <!-- add color -->
     <div class="modal fade" id="modal-2">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -601,7 +649,7 @@
             .then(response => response.json())
             .then(data => {
               let categoryOption = ''
-              data.forEach(category => {
+              data?.forEach(category => {
                 categoryOption += `<option value="${category._id}">${category.category_name}</option>`
               })
               selectBox.insertAdjacentHTML('beforeEnd', categoryOption)
@@ -612,9 +660,40 @@
           btn.onclick = (e) => {
             const id = btn.dataset.id
             const api = `http://localhost:8000/admin/product/category/delete/${id}`;
-            openModal(api, e.target)
+            opendeleteModal(api, e.target)
           }
         })
+        // update category
+        document.querySelectorAll('.editpcategory').forEach(btn => {
+          btn.onclick = async (e) => {
+            const selectBox2 = document.querySelector('#updatecategoryselect')
+
+            // ✅ Fetch and await categories properly
+            const category = await (await fetch('http://localhost:8000/admin/api/parent_category')).json()
+
+            const id = btn.dataset.id;
+
+            await fetch(`http://localhost:8000/admin/product/category/${id}`)
+              .then(response => response.json())
+              .then(data => {
+                document.querySelector('#updatecategory').value = data.category_name;
+                document.querySelector('#updatecategory_desc').value = data.category_desc;
+
+                let categoryOption = ''
+                category.forEach(c => {
+                  categoryOption += `
+            <option value="${c._id}" 
+              ${data.sub_categories.some(sub => sub._id == c._id) ? 'selected' : ''}>
+              ${c.category_name}
+            </option>`
+                })
+
+                // ✅ Reset before inserting to avoid duplicates
+                selectBox2.innerHTML = categoryOption
+              })
+          }
+        })
+
         // To Create Parent With Sub Category
         document.querySelector('#submitCategory').onsubmit = async (e) => {
           e.preventDefault();

@@ -10,8 +10,8 @@
             <div class="row">
                 <div class="col-lg-6 p-0">
                     <% if (locals.product_categories) { %>
-                        <% product_categories.forEach(category => { %>
-                            <% if (category.category_name == 'women' ) { %>
+                        <% product_categories.forEach(category=> { %>
+                            <% if (category.category_name=='women' ) { %>
                                 <div class="categories__item categories__large__item set-bg"
                                     data-setbg="/uploads/categoryImages/<%= category?.image %>">
                                     <div class="categories__text">
@@ -24,15 +24,15 @@
                                         <a href="products/<%= category?.category_name %>">Shop now</a>
                                     </div>
                                 </div>
-                            <% } %>
-                        <% }) %>
-                    <% } %>
+                                <% } %>
+                                    <% }) %>
+                                        <% } %>
                 </div>
                 <div class="col-lg-6">
                     <div class="row">
                         <% if (locals.product_categories) { %>
-                            <% for( let i = 0; i < 5; ++i ) { %>
-                                <% if (product_categories[i] != product_categories[1]) { %>
+                            <% for( let i=0; i < 5; ++i ) { %>
+                                <% if (product_categories[i] !=product_categories[1]) { %>
                                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
                                         <div class="categories__item set-bg"
                                             data-setbg="/uploads/categoryImages/<%= product_categories[i]?.image %>">
@@ -43,13 +43,14 @@
                                                 <p>
                                                     <%= product_categories[i]?.length %> items
                                                 </p>
-                                                <a href="products/<%= product_categories[i]?.category_name %>">Shop now</a>
+                                                <a href="products/<%= product_categories[i]?.category_name %>">Shop
+                                                    now</a>
                                             </div>
                                         </div>
                                     </div>
-                                <% } %>
-                            <% } %>
-                        <% } %>
+                                    <% } %>
+                                        <% } %>
+                                            <% } %>
                     </div>
                 </div>
             </div>
@@ -102,11 +103,9 @@
                                                                     class="arrow_expand"></span></a>
                                                         </li>
                                                         <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                                                        <li><button class="cart"
-                                                            data-id="<%= product._id %>">
-                                                            <span
-                                                                class="icon_bag_alt"></span>
-                                                        </button></li>
+                                                        <li><button class="cart" data-id="<%= product._id %>">
+                                                                <span class="icon_bag_alt"></span>
+                                                            </button></li>
                                                     </ul>
                                 </div>
                                 <div class="product__item__text">
@@ -176,31 +175,34 @@
                         <div class="section-title">
                             <h4>Hot Trend</h4>
                         </div>
-                        <% if (locals.products) { %>
-                            <% for( let i = 0; i < 3; ++i ) { %>  
-                                <div class="trend__item">
-                                    <div class="trend__item__pic" style="width: 90px; height: 90px;">
-                                        <img src="/uploads/productImages/<%= products[i].featured_image %>" alt="" class="w-100">
-                                    </div>
-                                    <div class="trend__item__text">
-                                        <h6>
-                                            <a href="product/<%= products[i].product_slug %>" style="color: black;">
-                                                <%= products[i].product_title %>
-                                            </a>
-                                        </h6>
-                                        <div class="rating">
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
+
+                            <% if (locals.products && locals.products.length> 0) { %>
+                                <% for( let i=0; i < 3; ++i ) { %>
+                                    <div class="trend__item">
+                                        <div class="trend__item__pic" style="width: 90px; height: 90px;">
+                                            <img src="/uploads/productImages/<%= products[i]?.featured_image %>" alt=""
+                                                class="w-100">
                                         </div>
-                                        <div class="product__price">$ <%= products[i].product_price %>
+                                        <div class="trend__item__text">
+                                            <h6>
+                                                <a href="product/<%= products[i]?.product_slug %>"
+                                                    style="color: black;">
+                                                    <%= products[i].product_title %>
+                                                </a>
+                                            </h6>
+                                            <div class="rating">
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                            </div>
+                                            <div class="product__price">$ <%= products[i].product_price %>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <% } %>
-                            <% } %>
+                                    <% } %>
+                                        <% } %>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-6">
@@ -209,11 +211,12 @@
                             <h4>Best seller</h4>
                         </div>
                         <% if (locals.products) { %>
-                            <% products.forEach((product,i) => { %>
-                                <% if (i < 5 && i >= 2) { %>
+                            <% products.forEach((product,i)=> { %>
+                                <% if (i < 5 && i>= 2) { %>
                                     <div class="trend__item">
                                         <div class="trend__item__pic" style="width: 90px; height: 90px;">
-                                            <img src="/uploads/productImages/<%= product.featured_image %>" alt="" class="w-100">
+                                            <img src="/uploads/productImages/<%= product.featured_image %>" alt=""
+                                                class="w-100">
                                         </div>
                                         <div class="trend__item__text">
                                             <h6>
@@ -232,9 +235,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                <% } %>
-                                <% }) %>
-                        <% } %>
+                                    <% } %>
+                                        <% }) %>
+                                            <% } %>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-6">
@@ -247,7 +250,8 @@
                                 <% if (i < 3) { %>
                                     <div class="trend__item">
                                         <div class="trend__item__pic" style="width: 90px; height: 90px;">
-                                            <img src="/uploads/productImages/<%= product.featured_image %>" alt="" class="w-100">
+                                            <img src="/uploads/productImages/<%= product.featured_image %>" alt=""
+                                                class="w-100">
                                         </div>
                                         <div class="trend__item__text">
                                             <h6>
@@ -266,9 +270,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                <% } %>
-                                <% }) %>
                                     <% } %>
+                                        <% }) %>
+                                            <% } %>
                     </div>
                 </div>
             </div>
@@ -374,8 +378,8 @@
             </div>
             <!-- Search End -->
             <%- include('../Site_partials/script') %>
-            <script defer>
-                 const cartbtn = document.querySelectorAll('.cart');
+                <script defer>
+                    const cartbtn = document.querySelectorAll('.cart');
                     cartbtn.forEach(btn => {
                         btn.addEventListener('click', async () => {
                             const productId = btn.dataset.id;
@@ -388,7 +392,7 @@
                             })
                         })
                     })
-            </script>
+                </script>
                 </body>
 
 </html>
