@@ -22,12 +22,13 @@ module.exports = {
     createPcategory: async (req, res) => {
         try {
             const existingCategory = await parent_Category.findOne({
-                category_name: { $regex: `^${req.body.category_name}$`, $options: "i" }
+                category_name: { $regex: `${req.body.category_name}`, $options: "i" }
             })
-
-            if (existingCategory) throw new Error('Already exists!')
+            
             const { category_name, category_desc } = req.body;
             image = req.file ? req.file.filename : null;
+
+            if (existingCategory) throw new Error('Already exists!')
             await parent_Category.create({ category_name, image, category_desc })
 
             return res.json({ message: 'Successfully Created!' })
@@ -83,6 +84,25 @@ module.exports = {
         } catch (error) {
             console.log('createScategory :' + error.message);
             return res.json({ message: error.message ?? 'Unsuccessfull!' })
+        }
+    },
+    updatesubcategory: async (req, res) => {
+        try {
+            const existingCategory = await sub_Category.findOne({
+                category_name: { $regex: `^${req.body.category_name}$`, $options: "i" }
+            })
+            if (existingCategory) {
+                const existing = [...existingCategory.parent_id, req.body.parent_id]
+                await sub_Category.updateOne({
+                    category_name: { $regex: `^${req.body.category_name}$`, $options: "i" }
+                }, { parent_id: existing })
+            } else {
+                await sub_Category.findByIdAndUpdate({ _id: req.params.id }, (req.body))
+            }
+            return res.json({ message: 'Successfully Created!' })
+
+        } catch (error) {
+            console.log('updatesubcategory : ' + error.message)
         }
     },
     getsubcategory: async (req, res) => {

@@ -5,17 +5,17 @@ const path = require('path')
 const cluster = require('cluster')
 const os = require('os')
 const totalCPUs = os.cpus().length;
-const port = process.env.PORT;
 const miniyHTML = require('express-minify-html-terser')
 const compression = require('compression')
+const app = express()
+const port = process.env.PORT;
+const adminRoutes = require('./routes/admin.routes')
+const siteRoutes = require('./routes/site.routes')
 
 if (cluster.isPrimary) {
     for (let i = 0; i < totalCPUs; i++) cluster.fork()
     cluster.fork().on('online', () => console.log(`worker online`))
 } else {
-    const app = express()
-    const adminRoutes = require('./routes/admin.routes')
-    const siteRoutes = require('./routes/site.routes')
     // Use Cookie parser to send cookie
     app.use(cookie())
     app.use(compression(

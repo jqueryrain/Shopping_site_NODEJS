@@ -93,7 +93,7 @@
                                   </td>
                                   <td>
                                     <button type="button" class="btn btn-success editpcategory" data-toggle="modal"
-                                      data-target="#update-category-default" data-id="<%= category._id %>">Edit</button>
+                                      data-target="#modal-default" data-id="<%= category._id %>">Edit</button>
                                     <% if (category.sub_categories.length==0) { %>
                                       <button type="button" class="btn btn-danger deletePcategory"
                                         data-id="<%= category._id %>" data-toggle="modal" data-target="#modal-danger">
@@ -104,15 +104,6 @@
                                 <% }) %>
                                   <% } %>
                           </tbody>
-                          <tfoot>
-                            <tr>
-                              <th rowspan="1" colspan="1">S.NO</th>
-                              <th rowspan="1" colspan="1">Category</th>
-                              <th rowspan="1" colspan="1">Image</th>
-                              <th rowspan="1" colspan="1">Sub Category</th>
-                              <th rowspan="1" colspan="1">Actions</th>
-                            </tr>
-                          </tfoot>
                         </table>
                       </div>
                       <!-- /.card-body -->
@@ -202,13 +193,6 @@
                                 <% }) %>
                                   <% } %>
                           </tbody>
-                          <tfoot>
-                            <tr>
-                              <th rowspan="1" colspan="1">S.NO</th>
-                              <th rowspan="1" colspan="1">Colors</th>
-                              <th rowspan="1" colspan="1">Action</th>
-                            </tr>
-                          </tfoot>
                         </table>
                       </div>
                       <!-- /.card-body -->
@@ -268,13 +252,6 @@
                                 <% }) %>
                                   <% } %>
                           </tbody>
-                          <tfoot>
-                            <tr>
-                              <th rowspan="1" colspan="1">S.NO</th>
-                              <th rowspan="1" colspan="1">Blog Color</th>
-                              <th rowspan="1" colspan="1">Action</th>
-                            </tr>
-                          </tfoot>
                         </table>
                       </div>
                       <!-- /.card-body -->
@@ -317,7 +294,7 @@
                               <th class="sorting sorting_asc" tabindex="0" aria-controls="example1" rowspan="1"
                                 colspan="1" aria-sort="ascending"
                                 aria-label="Rendering engine: activate to sort column descending">
-                                color</th>
+                                Brand</th>
                               <th class="sorting sorting_asc" tabindex="0" aria-controls="example1" rowspan="1"
                                 colspan="1" aria-sort="ascending"
                                 aria-label="Rendering engine: activate to sort column descending">
@@ -328,7 +305,7 @@
 
                             <% if (locals.brands) { %>
                               <% brands.forEach((brand,i)=> { %>
-                                <tr>
+                                <tr id="row-<%= brand._id %>">
                                   <td>
                                     <%= i+1 %>
                                   </td>
@@ -339,11 +316,21 @@
                                     <button type="button" class="btn btn-success editBrand" data-toggle="modal"
                                       data-target="#modal-5" data-id="<%= brand._id %>"
                                       data-brand="<%= brand.brand_name %>">Edit</button>
-                                    <% const idNotFound=products.every(brandId=> brandId.brand_name !== brand._id)
+                                    <% const idNotFound=products.every(brandId=> brandId.brand_name.toString() !==
+                                      brand._id.toString())
                                       %>
-                                      <% if (true) { %>
-                                        <button type="button" class="btn btn-danger deleteBrand"
-                                          data-id="<%= brand._id %>">
+                                      <% if (idNotFound) { %>
+                                        <button type="button" class="btn btn-danger" data-id="<%= brand._id %>" onclick="(async ()=> {   
+                                       const row = document.querySelector('#row-'+'<%= brand._id %>');
+                                          await fetch('http://localhost:8000/admin/api/attributes/brand/' + '<%= brand._id %>', {
+                                            method: 'DELETE',
+                                           })
+                                          .then(response => response.json())
+                                          .then(data => { 
+                                            row.remove()
+                                            AlertMessage(data.message,'Successfully Deleted!')
+                                          })
+                                        })()">
                                           Delete
                                         </button>
                                         <% } %>
@@ -352,13 +339,6 @@
                                 <% }) %>
                                   <% } %>
                           </tbody>
-                          <tfoot>
-                            <tr>
-                              <th rowspan="1" colspan="1">S.NO</th>
-                              <th rowspan="1" colspan="1">Colors</th>
-                              <th rowspan="1" colspan="1">Action</th>
-                            </tr>
-                          </tfoot>
                         </table>
                       </div>
                       <!-- /.card-body -->
@@ -456,7 +436,7 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <form id="editCategory" enctype="multipart/form-data">
+          <form id="updateCategory" enctype="multipart/form-data">
             <div class="modal-body">
               <div class="row">
                 <div class="col-12">
@@ -485,7 +465,7 @@
             </div>
             <div class="modal-footer justify-content-between">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="submit" class="toast-btn btn btn-primary toastrDefaultError">Save changes</button>
+              <button type="submit" class="toast-btn btn btn-primary">Save changes</button>
             </div>
           </form>
           <!-- /.modal-content -->
@@ -666,30 +646,24 @@
         // update category
         document.querySelectorAll('.editpcategory').forEach(btn => {
           btn.onclick = async (e) => {
-            const selectBox2 = document.querySelector('#updatecategoryselect')
+            const selectBox2 = document.querySelector('#maincategory')
 
             // ✅ Fetch and await categories properly
             const category = await (await fetch('http://localhost:8000/admin/api/parent_category')).json()
-
             const id = btn.dataset.id;
 
             await fetch(`http://localhost:8000/admin/product/category/${id}`)
               .then(response => response.json())
               .then(data => {
-                document.querySelector('#updatecategory').value = data.category_name;
-                document.querySelector('#updatecategory_desc').value = data.category_desc;
+                document.querySelector('#category').value = data.category_name;
+                document.querySelector('#category_desc').value = data.category_desc;
 
-                let categoryOption = ''
-                category.forEach(c => {
-                  categoryOption += `
-            <option value="${c._id}" 
-              ${data.sub_categories.some(sub => sub._id == c._id) ? 'selected' : ''}>
-              ${c.category_name}
-            </option>`
-                })
-
-                // ✅ Reset before inserting to avoid duplicates
-                selectBox2.innerHTML = categoryOption
+                const categoryOption = category.map(c => {
+                  return `<option value="${c._id}" >
+                            ${c.category_name}
+                          </option>`
+                }).join('')
+                selectBox2.insertAdjacentHTML('beforeEnd', categoryOption)
               })
           }
         })
@@ -702,6 +676,8 @@
           const category_name = document.querySelector('#category')
           const category_desc = document.querySelector('#category_desc')
           const formData = new FormData(e.target);
+          // console.log(Object.fromEntries(formData));
+
 
           if (selectBox.value && category_name.value) {
 
@@ -709,7 +685,10 @@
             await fetch(api, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ category_name: category_name.value.trim(), parent_id: selectBox.value.trim() })
+              body: JSON.stringify({
+                category_name: category_name.value.trim(),
+                parent_id: selectBox.value.trim()
+              })
             }).then(response => response.json())
               .then(data => {
                 AlertMessage(data.message, 'Already exists!' ?? 'Unsuccessfull!', 'Successfully Created!')
@@ -725,7 +704,7 @@
               .then(data => {
                 AlertMessage(data.message, 'Already exists!' || 'Unsuccessfull!', 'Successfully Created!')
               })
-            formData.reset()
+            // formData.reset()
           }
         }
         // To Create Color
@@ -756,7 +735,7 @@
               body: JSON.stringify({ size_name: size.value.trim() })
             })
               .then(response => response.json())
-              .then(data => AlertMessage(data.message, 'Already exists!' ?? 'Unsuccessfull!', 'Successfully Created!'))
+              .then(data => AlertMessage(data.message, 'Already exists!' || 'Unsuccessfull!', 'Successfully Created!'))
           }
           size.value = ''
         }
@@ -770,14 +749,6 @@
           if (brand_name && category_id) handlePostPutOperation(api, 'POST', { brand_name, category_id })
         }
 
-        // To Delete Brand Name
-        document.querySelectorAll('.deleteBrand').forEach(btn => {
-          btn.onclick = async (e) => {
-            const id = btn.dataset.id;
-            const api = `http://localhost:8000/admin/api/attributes/brand/${id}`;
-            opendeleteModal(api, btn)
-          }
-        })
         // To update Brand Name
         document.querySelectorAll('.editBrand').forEach(btn => {
           btn.onclick = async (e) => {

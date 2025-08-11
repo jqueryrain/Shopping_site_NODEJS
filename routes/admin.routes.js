@@ -83,10 +83,10 @@ router.post('/api/sub_category', productControllers.createScategory)
 router.route('/api/parent_category')
     .post(categoryImageupload.single('image'), productControllers.createPcategory)
     .get(productControllers.parenCategory)
+    // .put(categoryImageupload.single('image'), productControllers.updatePCategory)
 router.get('/productcategory/:id?', checkLogin, productControllers.showAllCategories)
 
 router.get('/product/category/:id', checkLogin, productControllers.showParentCategory)
-// router.put('/product/category/:id', checkLogin, categoryImageupload.single('image'), productControllers.updateCategory)
 router.delete('/product/category/delete/:id', checkLogin, productControllers.deleteParentCategory)
 
 router.post('/api/attributes/color', checkLogin, productControllers.createColor)
